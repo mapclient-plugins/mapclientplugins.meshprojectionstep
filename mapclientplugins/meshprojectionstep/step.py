@@ -41,6 +41,7 @@ class MeshProjectionStep(WorkflowStepMountPoint):
                       ])
         # Port data:
         self._input_mesh_file = None  # http://physiomeproject.org/workflow/1.0/rdf-schema#file_location
+        self._output_mesh_file = None
         # Config:
         self._config = {
             'datapoint-coordinates': 'coordinates',
@@ -76,8 +77,8 @@ class MeshProjectionStep(WorkflowStepMountPoint):
 
         project_nodes(region, self._config['point'], self._config['normal'], self._config['mesh-coordinates'], self._config['datapoint-coordinates'])
 
-        self._portData1 = os.path.join(output_location, 'fixed-projected-mesh.exf')
-        region.writeFile(self._portData1)
+        self._output_mesh_file = os.path.join(output_location, 'fixed-projected-mesh.exf')
+        region.writeFile(self._output_mesh_file)
 
         self._doneExecution()
 
@@ -115,7 +116,7 @@ class MeshProjectionStep(WorkflowStepMountPoint):
 
         :param index: Index of the port to return.
         """
-        return self._view.get_output_file()  # http://physiomeproject.org/workflow/1.0/rdf-schema#file_location
+        return self._output_mesh_file if self._config['fixed'] else self._view.get_output_file()  # http://physiomeproject.org/workflow/1.0/rdf-schema#file_location
 
     def configure(self):
         """
