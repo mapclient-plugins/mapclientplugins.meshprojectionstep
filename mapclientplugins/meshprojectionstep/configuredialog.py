@@ -74,8 +74,8 @@ class ConfigureDialog(QtWidgets.QDialog):
             'datapoint-coordinates': self._ui.lineEditDatapointCoordinates.text(),
             'identifier': self._ui.lineEditIdentifier.text(),
             'mesh-coordinates': self._ui.lineEditMeshCoordinates.text(),
-            'point': [self._ui.doupleSpinBoxPointX.value(), self._ui.doupleSpinBoxPointY.value(), self._ui.doupleSpinBoxPointZ.value()],
-            'normal': [self._ui.doupleSpinBoxNormalX.value(), self._ui.doupleSpinBoxNormalY.value(), self._ui.doupleSpinBoxNormalZ.value()],
+            'point': [self._ui.doubleSpinBoxPointX.value(), self._ui.doubleSpinBoxPointY.value(), self._ui.doubleSpinBoxPointZ.value()],
+            'normal': [self._ui.doubleSpinBoxNormalX.value(), self._ui.doubleSpinBoxNormalY.value(), self._ui.doubleSpinBoxNormalZ.value()],
         }
         return config
 
@@ -89,10 +89,9 @@ class ConfigureDialog(QtWidgets.QDialog):
         self._ui.lineEditIdentifier.setText(config['identifier'])
         self._ui.lineEditDatapointCoordinates.setText(config['datapoint-coordinates'])
         self._ui.lineEditMeshCoordinates.setText(config['mesh-coordinates'])
-        self._ui.doupleSpinBoxPointX.setValue(config['point'][0])
-        self._ui.doupleSpinBoxPointY.setValue(config['point'][1])
-        self._ui.doupleSpinBoxPointZ.setValue(config['point'][2])
-        self._ui.doupleSpinBoxNormalX.setValue(config['normal'][0])
-        self._ui.doupleSpinBoxNormalY.setValue(config['normal'][1])
-        self._ui.doupleSpinBoxNormalZ.setValue(config['normal'][2])
-
+        self._ui.doubleSpinBoxPointX.setValue(config['point'][0])
+        self._ui.doubleSpinBoxPointY.setValue(config['point'][1])
+        self._ui.doubleSpinBoxPointZ.setValue(config['point'][2])
+        self._ui.doubleSpinBoxNormalX.setValue(config['normal'][0])
+        self._ui.doubleSpinBoxNormalY.setValue(config['normal'][1])
+        self._ui.doubleSpinBoxNormalZ.setValue(config['normal'][2])
