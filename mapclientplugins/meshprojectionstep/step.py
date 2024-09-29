@@ -6,6 +6,8 @@ import json
 import os
 
 from PySide6 import QtGui
+from cmlibs.utils.zinc.node import project_nodes
+from cmlibs.zinc.context import Context
 
 from mapclient.mountpoints.workflowstep import WorkflowStepMountPoint
 
@@ -42,6 +44,7 @@ class MeshProjectionStep(WorkflowStepMountPoint):
         # Config:
         self._config = {
             'datapoint-coordinates': 'coordinates',
+            'fixed': False,
             'identifier': '',
             'mesh-coordinates': 'coordinates',
             'point': [0, 0, 0],
@@ -57,16 +60,41 @@ class MeshProjectionStep(WorkflowStepMountPoint):
         Make sure you call the _doneExecution() method when finished.  This method
         may be connected up to a button in a widget for example.
         """
+        if self._config['fixed']:
+            self._fixed_execution()
+        else:
+            self._user_execution()
+
+    def _fixed_execution(self):
+        output_location = self._output_location()
+        if not os.path.exists(output_location):
+            os.makedirs(output_location)
+
+        context = Context("project")
+        region = context.createRegion()
+        region.readFile(self._input_mesh_file)
+
+        project_nodes(region, self._config['point'], self._config['normal'], self._config['mesh-coordinates'], self._config['datapoint-coordinates'])
+
+        self._portData1 = os.path.join(output_location, 'fixed-projected-mesh.exf')
+        region.writeFile(self._portData1)
+
+        self._doneExecution()
+
+    def _user_execution(self):
         if self._view is None:
             self._model = MeshProjectionModel()
             self._view = MeshProjectionWidget(self._model)
             self._view.register_done_execution(self._doneExecution)
 
         self._view.set_identifier(self._config['identifier'])
-        self._view.set_location(os.path.join(self._location, self._config['identifier']))
+        self._view.set_location(self._output_location())
         self._view.clear()
         self._view.load(self._input_mesh_file)
         self._setCurrentWidget(self._view)
+
+    def _output_location(self):
+        return os.path.join(self._location, self._config['identifier'])
 
     def setPortData(self, index, dataIn):
         """
