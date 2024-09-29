@@ -72,6 +72,7 @@ class ConfigureDialog(QtWidgets.QDialog):
         self._previousIdentifier = self._ui.lineEditIdentifier.text()
         config = {
             'datapoint-coordinates': self._ui.lineEditDatapointCoordinates.text(),
+            'fixed': self._ui.groupBoxFixedProjection.isChecked(),
             'identifier': self._ui.lineEditIdentifier.text(),
             'mesh-coordinates': self._ui.lineEditMeshCoordinates.text(),
             'point': [self._ui.doubleSpinBoxPointX.value(), self._ui.doubleSpinBoxPointY.value(), self._ui.doubleSpinBoxPointZ.value()],
@@ -88,6 +89,7 @@ class ConfigureDialog(QtWidgets.QDialog):
         self._previousIdentifier = config['identifier']
         self._ui.lineEditIdentifier.setText(config['identifier'])
         self._ui.lineEditDatapointCoordinates.setText(config['datapoint-coordinates'])
+        self._ui.groupBoxFixedProjection.setChecked(config['fixed'])
         self._ui.lineEditMeshCoordinates.setText(config['mesh-coordinates'])
         self._ui.doubleSpinBoxPointX.setValue(config['point'][0])
         self._ui.doubleSpinBoxPointY.setValue(config['point'][1])
