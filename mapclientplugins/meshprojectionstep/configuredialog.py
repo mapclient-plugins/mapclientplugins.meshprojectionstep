@@ -70,7 +70,13 @@ class ConfigureDialog(QtWidgets.QDialog):
         identifier over the whole of the workflow.
         """
         self._previousIdentifier = self._ui.lineEditIdentifier.text()
-        config = {'identifier': self._ui.lineEditIdentifier.text()}
+        config = {
+            'datapoint-coordinates': self._ui.lineEditDatapointCoordinates.text(),
+            'identifier': self._ui.lineEditIdentifier.text(),
+            'mesh-coordinates': self._ui.lineEditMeshCoordinates.text(),
+            'point': [self._ui.doupleSpinBoxPointX.value(), self._ui.doupleSpinBoxPointY.value(), self._ui.doupleSpinBoxPointZ.value()],
+            'normal': [self._ui.doupleSpinBoxNormalX.value(), self._ui.doupleSpinBoxNormalY.value(), self._ui.doupleSpinBoxNormalZ.value()],
+        }
         return config
 
     def setConfig(self, config):
@@ -81,4 +87,12 @@ class ConfigureDialog(QtWidgets.QDialog):
         """
         self._previousIdentifier = config['identifier']
         self._ui.lineEditIdentifier.setText(config['identifier'])
+        self._ui.lineEditDatapointCoordinates.setText(config['datapoint-coordinates'])
+        self._ui.lineEditMeshCoordinates.setText(config['mesh-coordinates'])
+        self._ui.doupleSpinBoxPointX.setValue(config['point'][0])
+        self._ui.doupleSpinBoxPointY.setValue(config['point'][1])
+        self._ui.doupleSpinBoxPointZ.setValue(config['point'][2])
+        self._ui.doupleSpinBoxNormalX.setValue(config['normal'][0])
+        self._ui.doupleSpinBoxNormalY.setValue(config['normal'][1])
+        self._ui.doupleSpinBoxNormalZ.setValue(config['normal'][2])
 

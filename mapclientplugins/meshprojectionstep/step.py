@@ -41,7 +41,11 @@ class MeshProjectionStep(WorkflowStepMountPoint):
         self._input_mesh_file = None  # http://physiomeproject.org/workflow/1.0/rdf-schema#file_location
         # Config:
         self._config = {
+            'datapoint-coordinates': 'coordinates',
             'identifier': '',
+            'mesh-coordinates': 'coordinates',
+            'point': [0, 0, 0],
+            'normal': [0, 0, 1],
         }
 
         self._view = None
