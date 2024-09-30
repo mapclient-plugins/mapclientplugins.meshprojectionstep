@@ -20,7 +20,7 @@ The two ways of defining the projection are entirely independent.
 .. _fig-mesh-projection-configuration:
 
 .. figure:: _images/mesh-projection-configuration.png
-   :figwidth: 100%
+   :figwidth: 50%
    :align: center
 
    **Mesh Projection** configuration interface with fixed projection enabled and the properties set at their default values.
