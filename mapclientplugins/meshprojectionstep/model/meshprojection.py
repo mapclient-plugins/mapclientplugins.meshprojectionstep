@@ -1,4 +1,4 @@
-from cmlibs.maths.vectorops import add, cross, matrix_vector_mult, angle, axis_angle_to_rotation_matrix, mult, sub
+from cmlibs.maths.vectorops import add, cross, magnitude, matrix_vector_mult, angle, axis_angle_to_rotation_matrix, mult, sub
 from cmlibs.utils.zinc.field import create_field_coordinates
 from cmlibs.utils.zinc.finiteelement import evaluate_field_nodeset_range, create_square_element
 from cmlibs.utils.zinc.general import ChangeManager
@@ -38,10 +38,14 @@ class MeshProjectionModel(object):
     def get_selection_filter(self):
         return self._selection_filter
 
-    def load(self, mesh_file_location):
+    def load(self, mesh_file_location, mesh_coordinates_name=None):
         fm = self._mesh_region.getFieldmodule()
         with ChangeManager(fm):
             self._mesh_region.readFile(mesh_file_location)
+            if mesh_coordinates_name is not None:
+                potential_coordinates_field = fm.findFieldByName(mesh_coordinates_name).castFiniteElement()
+                if potential_coordinates_field.isValid():
+                    self._mesh_coordinates_field = potential_coordinates_field
         self._mesh_file_location = mesh_file_location
 
     def get_context(self):
@@ -102,35 +106,68 @@ class MeshProjectionModel(object):
     def get_mesh(self):
         return self._mesh
 
-    def _create_projection_region_copy(self, node_coordinate_field_name, datapoint_coordinate_field_name, projection_final_angle):
+    def _create_projection_region_copy(self, node_coordinate_field_name, datapoint_coordinate_field_name, projection_final_angle=None, standardise_output=False):
         region = self._output_context.createRegion()
         buffer = write_to_buffer(self._projected_region)
         read_from_buffer(region, buffer)
 
-        # Rotate to the x-y plane.
-        xy_normal = [0, 0, 1]
         plane_normal = self._plane.getNormal()
-        theta = angle(xy_normal, plane_normal)
-        rot_mx = axis_angle_to_rotation_matrix(cross(plane_normal, xy_normal), theta)
+        if standardise_output:
+            # Rotate to the x-y plane.
+            xy_normal = [0, 0, 1]
+            theta = angle(xy_normal, plane_normal)
+            rot_mx = axis_angle_to_rotation_matrix(cross(plane_normal, xy_normal), theta)
 
-        rotation_point = self._plane.getRotationPoint()
-        delta = [-component for component in rotation_point]
+            rotation_point = self._plane.getRotationPoint()
+            delta = [-component for component in rotation_point]
 
-        rotate_nodes(region, rot_mx, rotation_point, node_coordinate_field_name, datapoint_coordinate_field_name)
-        translate_nodes(region, delta, node_coordinate_field_name, datapoint_coordinate_field_name)
+            rotate_nodes(region, rot_mx, rotation_point, node_coordinate_field_name, datapoint_coordinate_field_name)
+            translate_nodes(region, delta, node_coordinate_field_name, datapoint_coordinate_field_name)
+            projection_final_normal = xy_normal
+            projection_final_point = [0, 0, 0]
+        else:
+            projection_final_normal = plane_normal
+            field_module = region.getFieldmodule()
+            nodes = field_module.findNodesetByFieldDomainType(Field.DOMAIN_TYPE_NODES)
+            minima, maxima = evaluate_field_nodeset_range(self._mesh_coordinates_field, nodes)
+            if minima and maxima:
+                mean_point_nodes = mult(add(minima, maxima), 0.5)
+            else:
+                mean_point_nodes = None
+            datapoints_coordinate_field = field_module.findFieldByName(datapoint_coordinate_field_name)
 
-        rot_mx = axis_angle_to_rotation_matrix(xy_normal, projection_final_angle)
-        rotate_nodes(region, rot_mx, [0, 0, 0], node_coordinate_field_name, datapoint_coordinate_field_name)
+            datapoints = field_module.findNodesetByFieldDomainType(Field.DOMAIN_TYPE_DATAPOINTS)
+            minima, maxima = evaluate_field_nodeset_range(datapoints_coordinate_field, datapoints)
+            if minima and maxima:
+                mean_point_datapoints = mult(add(minima, maxima), 0.5)
+            else:
+                mean_point_datapoints = None
+            if mean_point_nodes and mean_point_datapoints:
+                projection_final_point = mult(add(mean_point_datapoints, mean_point_nodes), 0.5)
+            elif mean_point_nodes:
+                projection_final_point = mean_point_nodes
+            elif mean_point_datapoints:
+                projection_final_point = mean_point_datapoints
+            else:
+                projection_final_point = [0, 0, 0]
+
+        if projection_final_angle is not None:
+            rot_mx = axis_angle_to_rotation_matrix(projection_final_normal, projection_final_angle)
+            rotate_nodes(region, rot_mx, projection_final_point, node_coordinate_field_name, datapoint_coordinate_field_name)
 
         return region
 
-    def write_projected_mesh(self, location, node_coordinate_field_name, datapoint_coordinate_field_name, projection_final_angle):
-        output_region = self._create_projection_region_copy(node_coordinate_field_name, datapoint_coordinate_field_name, projection_final_angle)
+    def write_projected_mesh(self, location, node_coordinate_field_name, datapoint_coordinate_field_name, projection_final_angle=None, standardise_output=False):
+        output_region = self._create_projection_region_copy(node_coordinate_field_name, datapoint_coordinate_field_name, projection_final_angle, standardise_output)
         output_region.writeFile(location)
 
     def preview_projected_mesh(self, node_coordinate_field_name, datapoint_coordinate_field_name, projection_final_angle):
-        self._preview_region = self._create_projection_region_copy(node_coordinate_field_name, datapoint_coordinate_field_name, projection_final_angle)
+        self._preview_region = self._create_projection_region_copy(node_coordinate_field_name, datapoint_coordinate_field_name, projection_final_angle, standardise_output=True)
         return self._preview_region
+
+    def calculate_plane_size(self):
+        minima, maxima = self.evaluate_nodes_minima_and_maxima()
+        return magnitude(sub(maxima, minima))
 
     def _create_selection_filter(self):
         m = self._context.getScenefiltermodule()

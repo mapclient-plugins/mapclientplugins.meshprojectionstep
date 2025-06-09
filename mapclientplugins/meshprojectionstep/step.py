@@ -1,4 +1,3 @@
-
 """
 MAP Client Plugin Step
 """
@@ -48,8 +47,9 @@ class MeshProjectionStep(WorkflowStepMountPoint):
             'fixed': False,
             'identifier': '',
             'mesh-coordinates': 'coordinates',
-            'point': [0, 0, 0],
             'normal': [0, 0, 1],
+            'point': [0, 0, 0],
+            'standardise-output': False,
         }
 
         self._view = None
@@ -71,14 +71,18 @@ class MeshProjectionStep(WorkflowStepMountPoint):
         if not os.path.exists(output_location):
             os.makedirs(output_location)
 
-        context = Context("project")
-        region = context.createRegion()
-        region.readFile(self._input_mesh_file)
-
-        project_nodes(region, self._config['point'], self._config['normal'], self._config['mesh-coordinates'], self._config['datapoint-coordinates'])
-
         self._output_mesh_file = os.path.join(output_location, 'fixed-projected-mesh.exf')
-        region.writeFile(self._output_mesh_file)
+
+        model = MeshProjectionModel()
+        model.load(self._input_mesh_file, mesh_coordinates_name=self._config['mesh-coordinates'])
+        plane_size = model.calculate_plane_size()
+        model.create_projection_plane(self._config['point'], self._config['normal'], plane_size)
+        model.project(self._config['mesh-coordinates'], self._config['datapoint-coordinates'])
+        model.write_projected_mesh(
+            self._output_mesh_file,
+            self._config['mesh-coordinates'],
+            self._config['datapoint-coordinates'],
+            standardise_output=self._config['standardise-output'])
 
         self._doneExecution()
 
@@ -90,6 +94,7 @@ class MeshProjectionStep(WorkflowStepMountPoint):
 
         self._view.set_identifier(self._config['identifier'])
         self._view.set_location(self._output_location())
+        self._view.set_standardise_output(self._config['standardise-output'])
         self._view.clear()
         self._view.load(self._input_mesh_file)
         self._setCurrentWidget(self._view)

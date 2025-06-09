@@ -75,8 +75,9 @@ class ConfigureDialog(QtWidgets.QDialog):
             'fixed': self._ui.groupBoxFixedProjection.isChecked(),
             'identifier': self._ui.lineEditIdentifier.text(),
             'mesh-coordinates': self._ui.lineEditMeshCoordinates.text(),
-            'point': [self._ui.doubleSpinBoxPointX.value(), self._ui.doubleSpinBoxPointY.value(), self._ui.doubleSpinBoxPointZ.value()],
             'normal': [self._ui.doubleSpinBoxNormalX.value(), self._ui.doubleSpinBoxNormalY.value(), self._ui.doubleSpinBoxNormalZ.value()],
+            'point': [self._ui.doubleSpinBoxPointX.value(), self._ui.doubleSpinBoxPointY.value(), self._ui.doubleSpinBoxPointZ.value()],
+            'standardise-output': self._ui.checkBoxStandardisedXYPlaneOutput.isChecked(),
         }
         return config
 
@@ -90,6 +91,7 @@ class ConfigureDialog(QtWidgets.QDialog):
         self._ui.lineEditIdentifier.setText(config['identifier'])
         self._ui.lineEditDatapointCoordinates.setText(config['datapoint-coordinates'])
         self._ui.groupBoxFixedProjection.setChecked(config['fixed'])
+        self._ui.checkBoxStandardisedXYPlaneOutput.setChecked(config['standardise-output'])
         self._ui.lineEditMeshCoordinates.setText(config['mesh-coordinates'])
         self._ui.doubleSpinBoxPointX.setValue(config['point'][0])
         self._ui.doubleSpinBoxPointY.setValue(config['point'][1])

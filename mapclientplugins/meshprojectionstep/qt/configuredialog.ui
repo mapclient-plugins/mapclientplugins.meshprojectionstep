@@ -35,6 +35,16 @@
        </layout>
       </item>
       <item>
+       <widget class="QCheckBox" name="checkBoxStandardisedXYPlaneOutput">
+        <property name="toolTip">
+         <string>Rotate the projected mesh from its arbitrary 2D plane onto the X-Y plane for standardised output.</string>
+        </property>
+        <property name="text">
+         <string>Ouput to X-Y Plane</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QGroupBox" name="groupBoxFixedProjection">
         <property name="title">
          <string>Fixed Projection</string>

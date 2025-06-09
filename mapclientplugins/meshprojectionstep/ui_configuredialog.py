@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'configuredialog.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.5.2
+## Created by: Qt User Interface Compiler version 6.8.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -15,10 +15,10 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QAbstractButton, QApplication, QDialog, QDialogButtonBox,
-    QDoubleSpinBox, QFormLayout, QGridLayout, QGroupBox,
-    QHBoxLayout, QLabel, QLineEdit, QSizePolicy,
-    QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QAbstractButton, QApplication, QCheckBox, QDialog,
+    QDialogButtonBox, QDoubleSpinBox, QFormLayout, QGridLayout,
+    QGroupBox, QHBoxLayout, QLabel, QLineEdit,
+    QSizePolicy, QVBoxLayout, QWidget)
 
 class Ui_ConfigureDialog(object):
     def setupUi(self, ConfigureDialog):
@@ -45,6 +45,11 @@ class Ui_ConfigureDialog(object):
 
 
         self.verticalLayout.addLayout(self.horizontalLayout)
+
+        self.checkBoxStandardisedXYPlaneOutput = QCheckBox(self.configGroupBox)
+        self.checkBoxStandardisedXYPlaneOutput.setObjectName(u"checkBoxStandardisedXYPlaneOutput")
+
+        self.verticalLayout.addWidget(self.checkBoxStandardisedXYPlaneOutput)
 
         self.groupBoxFixedProjection = QGroupBox(self.configGroupBox)
         self.groupBoxFixedProjection.setObjectName(u"groupBoxFixedProjection")
@@ -193,6 +198,10 @@ class Ui_ConfigureDialog(object):
         ConfigureDialog.setWindowTitle(QCoreApplication.translate("ConfigureDialog", u"Configure Mesh Projection", None))
         self.configGroupBox.setTitle("")
         self.labelIdentifier.setText(QCoreApplication.translate("ConfigureDialog", u"Identifier:  ", None))
+#if QT_CONFIG(tooltip)
+        self.checkBoxStandardisedXYPlaneOutput.setToolTip(QCoreApplication.translate("ConfigureDialog", u"Rotate the projected mesh from its arbitrary 2D plane onto the X-Y plane for standardised output.", None))
+#endif // QT_CONFIG(tooltip)
+        self.checkBoxStandardisedXYPlaneOutput.setText(QCoreApplication.translate("ConfigureDialog", u"Ouput to X-Y Plane", None))
         self.groupBoxFixedProjection.setTitle(QCoreApplication.translate("ConfigureDialog", u"Fixed Projection", None))
         self.labelPoint.setText(QCoreApplication.translate("ConfigureDialog", u"Point", None))
         self.labelPointX.setText(QCoreApplication.translate("ConfigureDialog", u"x:", None))

@@ -70,6 +70,7 @@ class MeshProjectionWidget(QtWidgets.QWidget):
         self._model = model
         self._location = None
         self._callback = None
+        self._standardise_output = False
         self._plane_handlers_registered = False
         self._coordinate_field_list = []
 
@@ -91,6 +92,9 @@ class MeshProjectionWidget(QtWidgets.QWidget):
 
     def set_identifier(self, identifier):
         self._ui.labelMeshProjectionIdentifier.setText(identifier)
+
+    def set_standardise_output(self, standardise_output):
+        self._standardise_output = standardise_output
 
     def load(self, mesh_file_location):
         self._scene.setup_visualisation()
@@ -196,7 +200,7 @@ class MeshProjectionWidget(QtWidgets.QWidget):
 
         node_coordinate_field_name, datapoint_coordinate_field_name = self._current_coordinate_field_names()
         theta = self._ui.sliderFinalOrientation.value() * math.pi / 180
-        self._model.write_projected_mesh(self.get_output_file(), node_coordinate_field_name, datapoint_coordinate_field_name, theta)
+        self._model.write_projected_mesh(self.get_output_file(), node_coordinate_field_name, datapoint_coordinate_field_name, theta, self._standardise_output)
         self._reset_projection()
 
     def _reset_projection(self):
@@ -216,14 +220,10 @@ class MeshProjectionWidget(QtWidgets.QWidget):
     def _pixel_scale_changed(self, scale):
         self._scene.set_pixel_scale(scale)
 
-    def _calculate_plane_size(self):
-        minima, maxima = self._model.evaluate_nodes_minima_and_maxima()
-        return magnitude([maxima[0] - minima[0], maxima[1] - minima[1], maxima[2] - minima[2]])
-
     def _auto_align_clicked(self):
         data_points = self._model.mesh_nodes_coordinates()
         point_on_plane, plane_normal = _calculate_best_fit_plane(data_points)
-        plane_size = self._calculate_plane_size()
+        plane_size = self._model.calculate_plane_size()
         self._create_projection_plane(point_on_plane, plane_normal, plane_size)
 
     def _create_projection_plane(self, point_on_plane, plane_normal, plane_size):
@@ -307,7 +307,7 @@ class MeshProjectionWidget(QtWidgets.QWidget):
         settings = {
             "node_size": self._ui.spinBoxNodeSize.value(),
             "alpha": self._ui.spinBoxPlaneAlpha.value(),
-            "plane_size": self._calculate_plane_size(),
+            "plane_size": self._model.calculate_plane_size(),
             "plane_rotation_point": plane.getRotationPoint(),
             "plane_normal": plane.getNormal(),
             "final_orientation": self._ui.sliderFinalOrientation.value(),
