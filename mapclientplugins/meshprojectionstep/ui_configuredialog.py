@@ -201,7 +201,7 @@ class Ui_ConfigureDialog(object):
 #if QT_CONFIG(tooltip)
         self.checkBoxStandardisedXYPlaneOutput.setToolTip(QCoreApplication.translate("ConfigureDialog", u"Rotate the projected mesh from its arbitrary 2D plane onto the X-Y plane for standardised output.", None))
 #endif // QT_CONFIG(tooltip)
-        self.checkBoxStandardisedXYPlaneOutput.setText(QCoreApplication.translate("ConfigureDialog", u"Ouput to X-Y Plane", None))
+        self.checkBoxStandardisedXYPlaneOutput.setText(QCoreApplication.translate("ConfigureDialog", u"Output to X-Y Plane", None))
         self.groupBoxFixedProjection.setTitle(QCoreApplication.translate("ConfigureDialog", u"Fixed Projection", None))
         self.labelPoint.setText(QCoreApplication.translate("ConfigureDialog", u"Point", None))
         self.labelPointX.setText(QCoreApplication.translate("ConfigureDialog", u"x:", None))

@@ -40,7 +40,7 @@
          <string>Rotate the projected mesh from its arbitrary 2D plane onto the X-Y plane for standardised output.</string>
         </property>
         <property name="text">
-         <string>Ouput to X-Y Plane</string>
+         <string>Output to X-Y Plane</string>
         </property>
        </widget>
       </item>
