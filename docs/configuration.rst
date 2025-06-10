@@ -1,21 +1,42 @@
 .. _mcp-mesh-projection-configuration:
 
 Configuration
--------------
+=============
 
-This step identifier can configured in the configuration dialog along with setting a fixed projection.
+This dialog allows you to configure the step identifier and several projection-related settings.
 
-The fixed projection is set by checking the check box for the panel and setting the available properties.
-The properties that can be set are:
+Available Options
+-----------------
 
- * The mesh coordinates,
- * The datapoints coordinates,
- * The point attributes of the plane description, and
- * The normal attributes of the plane description.
+1. **Step Identifier**
 
-Using the fixed projection option will not show a dialog to the user.
-The fixed projection does not affect the non-fixed projection or user defined projection.
-The two ways of defining the projection are entirely independent.
+   You can set the step identifier directly in this configuration dialog.
+
+2. **Output Final Projection in the X-Y Plane**
+
+   Enabling this option applies a final rotation to the data so that:
+
+   - The position data is aligned with the first (X) and second (Y) coordinates.
+   - The third (Z) coordinate is effectively zero.
+
+3. **Fixed Projection**
+
+   To enable a fixed projection:
+
+   - Check the corresponding checkbox in the panel.
+   - Configure the available properties listed below.
+
+   **Configurable Properties:**
+
+   - Mesh coordinates
+   - Data point coordinates
+   - Point attributes of the plane description
+   - Normal attributes of the plane description
+
+   **Notes:**
+
+   - When using the fixed projection option, no additional dialog will be shown to the user.
+   - The fixed projection is independent of the non-fixed or user-defined projection options. These methods do not interfere with each other.
 
 .. _fig-mesh-projection-configuration:
 
