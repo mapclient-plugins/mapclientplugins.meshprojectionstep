@@ -1,0 +1,6 @@
+PySide6
+cmlibs.maths
+cmlibs.utils
+cmlibs.widgets
+cmlibs.zinc
+numpy
